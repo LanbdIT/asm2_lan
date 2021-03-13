@@ -29,7 +29,7 @@ app.post('/doInsert',async (req,res)=>{
     
     
     let error = '';
-    let regex = new RegExp('lan.|lan','i'); // tao chuoi regex de tim kiem gan dung
+    let regex = new RegExp('prd.|prd','i'); // tao chuoi regex de tim kiem gan dung
    
     if (nameInput.length < 6){
         error += ' Ten phai dai hon 6 ki tu |';
@@ -40,7 +40,7 @@ app.post('/doInsert',async (req,res)=>{
     }
 
     if (!nameInput.match(regex)){
-        error += ' Ten phai bat dau bang lan |';
+        error += ' Ten phai bat dau bang prd |';
     }
 
     if (error) {
@@ -63,11 +63,11 @@ app.post('/doInsert',async (req,res)=>{
 app.get('/search',(req,res)=>{
     res.render('search')
 })
-app.post('/doSearch',async (req,res)=>{
-    let nameInput = req.body.txtName;
+app.post('/search',async (req,res)=>{
+    let searchText = req.body.txtSearch;
     let client= await MongoClient.connect(url);  
     let dbo = client.db("ProductDB2");  
-    let results = await dbo.collection("products").find({productName:nameInput}).toArray();
+    let results = await dbo.collection("products").find({productName: new RegExp(searchText,'i')}).toArray();
     res.render('index',{model:results})
 })
 
@@ -108,3 +108,4 @@ app.post('/doEdit',async (req,res)=>{
 var PORT = process.env.PORT || 3000
 app.listen(PORT)
 console.log("Server is running!")
+//n

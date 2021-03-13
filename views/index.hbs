@@ -13,12 +13,16 @@
 <body>
     <h1 class="alert alert-primary"><center>All Products</center>  </h1>
     <div class="container">
+        <form action="/search" method="POST">
+            Enter value <input type="text" name="txtSearch">
+            <input type="submit" value="Search">
+        </form>
         <table class="table table-bordered">
             <tr>
                 <td>Name</td>
                 <td>Price</td>     
                 <td>Delete</td>
-                <td>Edit</td>
+                <td>Edit Price</td>
             </tr>
             {{#each model}}
             <tr>
