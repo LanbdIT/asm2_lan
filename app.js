@@ -10,12 +10,14 @@ hbs.registerPartials(__dirname +'/views/partials')
 
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb+srv://Ender:Ender123@cluster0.plzr1.mongodb.net/test';
+
 app.get('/',async (req,res)=>{
     let client= await MongoClient.connect(url);  
     let dbo = client.db("ProductDB2");  
     let results = await dbo.collection("products").find({}).toArray();
     res.render('index',{model:results})
 })
+
 app.get('/insert',(req,res)=>{
     res.render('newProduct');
 })
@@ -29,7 +31,6 @@ app.post('/doInsert',async (req,res)=>{
     
     
     let error = '';
-    let regex = new RegExp('prd.|prd','i'); // tao chuoi regex de tim kiem gan dung
    
     if (nameInput.length < 6){
         error += ' Ten phai dai hon 6 ki tu |';
@@ -37,10 +38,6 @@ app.post('/doInsert',async (req,res)=>{
 
     if (priceInput <100){
         error += ' Gia phai lon hon 100 | ';
-    }
-
-    if (!nameInput.match(regex)){
-        error += ' Ten phai bat dau bang prd |';
     }
 
     if (error) {
@@ -51,7 +48,7 @@ app.post('/doInsert',async (req,res)=>{
         let dbo = client.db("ProductDB2"); 
         let newProduct = {productName : nameInput, price:priceInput};
         await dbo.collection("products").insertOne(newProduct);
-    
+        console.log(newProduct)
         res.redirect('/');
     }
     
@@ -87,21 +84,25 @@ app.get('/Edit',async (req,res)=>{
 
     let client= await MongoClient.connect(url);
     let dbo = client.db("ProductDB2");
+
     let result = await dbo.collection("products").findOne({"_id" : ObjectID(id)});
     res.render('editSanPham',{model:result});
 })
 app.post('/doEdit',async (req,res)=>{
+    let client= await MongoClient.connect(url);
+    let dbo = client.db("ProductDB2");
+
     let id= req.body.id;
     let name = req.body.txtName;
     let priceInput = req.body.txtPrice;
-    let newValues ={$set : {productName: name,price:priceInput}};
+
     var ObjectID = require('mongodb').ObjectID;
     let condition = {"_id" : ObjectID(id)};
     
-    let client= await MongoClient.connect(url);
-    let dbo = client.db("ProductDB2");
-    await dbo.collection("products").updateOne(condition,newValues);
+    console.log(condition)
     
+    let updateProduct ={$set : {productName : name, price:priceInput}} ;
+    await dbo.collection("products").updateOne(condition,updateProduct) ;
     res.redirect('/');
 })
 
